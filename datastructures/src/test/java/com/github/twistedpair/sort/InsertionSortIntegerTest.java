@@ -1,6 +1,6 @@
 package com.github.twistedpair.sort;
 
-import com.github.twistedpair.sort.AbstractIntegerSortTest;
+import com.github.twistedpair.sort.AbstractSortIntegerTest;
 
 
 /**
@@ -8,8 +8,8 @@ import com.github.twistedpair.sort.AbstractIntegerSortTest;
  * 
  * @author Joseph Lust
  */
-public final class InsertionIntegerSortTest extends
-	AbstractIntegerSortTest<InsertionSort<Integer>> {
+public final class InsertionSortIntegerTest extends
+	AbstractSortIntegerTest<InsertionSort<Integer>> {
 
 	final InsertionSort<Integer> sorter = new InsertionSort<>();
 

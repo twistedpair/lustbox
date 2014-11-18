@@ -4,11 +4,9 @@ package com.github.twistedpair.sort;
 public final class QuickSort<T extends Comparable<T>> extends Sorter<T> {
 
 	@Override
-	public T[] sort(final T[] arr) {
-
+	public void sort(final T[] arr) {
 		// TODO randomize before hand w/ Shuffle
 		quickSort(arr, 0, arr.length - 1);
-		return arr;
 	}
 
 	private void quickSort(final T[] arr, final int lo, final int hi) {

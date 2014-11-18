@@ -3,7 +3,7 @@ package com.github.twistedpair.sort;
 
 public abstract class Sorter<T extends Comparable<T>> {
 
-	public abstract T[] sort(final T[] arr);
+	public abstract void sort(final T[] arr);
 
 	protected boolean less(final T[] arr, final int o1, final int o2) {
 		return arr[o1].compareTo(arr[o2]) < 0;

@@ -142,6 +142,7 @@ final class LinkedList<E> implements Iterable<E> {
 			}
 		}
 
+		@SuppressWarnings("unchecked") // I know, ugly
 		@Override
 		public void remove() {
 			if(currentNode==null) {

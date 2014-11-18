@@ -4,7 +4,7 @@ package com.github.twistedpair.sort;
 public final class SelectionSort<T extends Comparable<T>> extends Sorter<T> {
 
 	@Override
-	public T[] sort(final T[] arr) {
+	public void sort(final T[] arr) {
 
 		final int N = arr.length;
 		// scan entire array
@@ -18,7 +18,5 @@ public final class SelectionSort<T extends Comparable<T>> extends Sorter<T> {
 			}
 			exch(arr, i, min);
 		}
-
-		return arr;
 	}
 }
