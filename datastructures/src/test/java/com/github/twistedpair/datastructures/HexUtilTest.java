@@ -49,7 +49,7 @@ public class HexUtilTest {
 
 	@Test
 	public void shouldHandleOutputtingNegative2Chars() throws Exception {
-		System.out.println(Long.toHexString(-47));
+		// System.out.println(Long.toHexString(-47));
 		doLongTest(-47L, "FFFFFFFFFFFFFFD1");
 	}
 

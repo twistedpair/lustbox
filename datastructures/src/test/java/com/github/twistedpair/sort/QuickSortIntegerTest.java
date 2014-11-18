@@ -1,4 +1,5 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.sort;
+
 
 
 /**

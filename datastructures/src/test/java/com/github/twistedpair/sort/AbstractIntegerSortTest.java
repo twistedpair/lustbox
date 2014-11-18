@@ -1,4 +1,4 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.sort;
 
 import static org.junit.Assert.assertArrayEquals;
 

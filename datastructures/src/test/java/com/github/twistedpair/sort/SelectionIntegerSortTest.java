@@ -1,4 +1,7 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.sort;
+
+import com.github.twistedpair.sort.AbstractIntegerSortTest;
+import com.github.twistedpair.sort.SelectionSort;
 
 
 /**

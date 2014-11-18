@@ -1,4 +1,4 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.sort;
 
 
 public final class SelectionSort<T extends Comparable<T>> extends Sorter<T> {

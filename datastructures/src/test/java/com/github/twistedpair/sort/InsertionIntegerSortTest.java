@@ -1,4 +1,6 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.sort;
+
+import com.github.twistedpair.sort.AbstractIntegerSortTest;
 
 
 /**
@@ -7,7 +9,7 @@ package com.github.twistedpair.datastructures;
  * @author Joseph Lust
  */
 public final class InsertionIntegerSortTest extends
-		AbstractIntegerSortTest<InsertionSort<Integer>> {
+	AbstractIntegerSortTest<InsertionSort<Integer>> {
 
 	final InsertionSort<Integer> sorter = new InsertionSort<>();
 

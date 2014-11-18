@@ -1,4 +1,4 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.sort;
 
 
 public abstract class Sorter<T extends Comparable<T>> {

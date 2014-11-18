@@ -1,6 +1,6 @@
 package com.github.twistedpair.datastructures;
 
-import java.util.*;
+import java.util.NoSuchElementException;
 
 /**
  * Class for creating a custom hashtable with integer keys and values.
@@ -9,155 +9,160 @@ import java.util.*;
  */
 public class IntHashTable {
 
-    /**
-     * Internal array for hash table
-     */
-    private IntNode arr[];
+	/**
+	 * Internal array for hash table
+	 */
+	private final IntNode arr[];
 
-    /** 
-     * Size of array and used for mod function
-     * Should be a large prime number 
-     * Should not be a power of 2 but can be close to a power of 2
-     */
-    private int size;
+	/**
+	 * Size of array and used for mod function
+	 * Should be a large prime number
+	 * Should not be a power of 2 but can be close to a power of 2
+	 */
+	private final int size;
 
-    /**
-     * Stores current number of collisions
-     */
-    private int collisionCnt;
+	/**
+	 * Stores current number of collisions
+	 */
+	private int collisionCnt;
 
-    public IntHashTable(int size) {
-        this.size = size;
-        this.arr = new IntNode[size];
-        this.collisionCnt = 0;
-    }
+	public IntHashTable(final int size) {
+		this.size = size;
+		arr = new IntNode[size];
+		collisionCnt = 0;
+	}
 
-    /**
-     * Puts key, value pair in array
-     * Updates key if key already exists
-     * Increments collision counter if collision
-     */
-    public void put(int key, int value) {
-        int insPos = hashFunction(key);
-        
-        // check if already in array
-        IntNode intNode = arr[insPos];
+	/**
+	 * Puts key, value pair in array
+	 * Updates key if key already exists
+	 * Increments collision counter if collision
+	 */
+	public void put(final int key, final int value) {
+		final int insPos = hashFunction(key);
 
-        while (intNode != null) {
+		// check if already in array
+		IntNode intNode = arr[insPos];
 
-            // if in array update value, return
-            if (intNode.key == key) {
-                intNode.value = value;
-                return;
-            }
-            intNode = intNode.next;
-        }
+		while (intNode != null) {
 
-        // create a new IntNode
-        intNode = new IntNode(key, value);
-        if (arr[insPos] != null) {
-            intNode.next = arr[insPos];
-            this.collisionCnt++;
-        }
+			// if in array update value, return
+			if (intNode.key == key) {
+				intNode.value = value;
+				return;
+			}
+			intNode = intNode.next;
+		}
 
-        // put at normal position, no collision
-        arr[insPos] = intNode;
-    }
+		// create a new IntNode
+		intNode = new IntNode(key, value);
+		if (arr[insPos] != null) {
+			intNode.next = arr[insPos];
+			collisionCnt++;
+		}
 
-    /**
-     * Removes key from hash table
-     * throws NoSuchElementException if it does exist
-     * Decrements collision counter
-     */
-    public void remove(int key) {
-        int pos = hashFunction(key);
-        IntNode node = arr[pos];
+		// put at normal position, no collision
+		arr[insPos] = intNode;
+	}
 
-        if (node == null) throw new NoSuchElementException();
+	/**
+	 * Removes key from hash table
+	 * throws NoSuchElementException if it does exist
+	 * Decrements collision counter
+	 */
+	public void remove(final int key) {
+		final int pos = hashFunction(key);
+		IntNode node = arr[pos];
 
-        // Handle head of list being equal to key
-        if (node.key == key) {
-            arr[pos] = node.next;
-            if (node.next != null)
-                this.collisionCnt--;
-            node = null;
-            return;
-        }
+		if (node == null) {
+			throw new NoSuchElementException();
+		}
 
-        IntNode nextNode = node.next;
+		// Handle head of list being equal to key
+		if (node.key == key) {
+			arr[pos] = node.next;
+			if (node.next != null) {
+				collisionCnt--;
+			}
+			node = null;
+			return;
+		}
 
-        // Check key of nextNode in loop
-        while (nextNode != null) {
-            if (nextNode.key == key) {
-                this.collisionCnt--;
-                node.next = nextNode.next;
-                nextNode = null;
-                return;
-            }
-            node = nextNode;
-            nextNode = nextNode.next;
-        }
+		IntNode nextNode = node.next;
 
-        // If no element matches key, throw exception
-        throw new NoSuchElementException();
-    }
+		// Check key of nextNode in loop
+		while (nextNode != null) {
+			if (nextNode.key == key) {
+				collisionCnt--;
+				node.next = nextNode.next;
+				nextNode = null;
+				return;
+			}
+			node = nextNode;
+			nextNode = nextNode.next;
+		}
 
-    public boolean hasKey(int key) {
-        int pos = hashFunction(key);
-        IntNode node = arr[pos];
-        while(node != null) {
-            if (node.key == key)
-                return true;
-            node = node.next;
-        }
-        return false;
-    }
+		// If no element matches key, throw exception
+		throw new NoSuchElementException();
+	}
 
-    /**
-     * Returns value if exists
-     * Return null if not exists
-     */
-    public Integer get(int key) {
-        int pos = hashFunction(key);
-        IntNode node = arr[pos];
-        while(node != null) {
-            if (node.key == key)
-                return node.value;
-            node = node.next;
-        }
-        return null;
-    }
+	public boolean hasKey(final int key) {
+		final int pos = hashFunction(key);
+		IntNode node = arr[pos];
+		while(node != null) {
+			if (node.key == key) {
+				return true;
+			}
+			node = node.next;
+		}
+		return false;
+	}
 
-    public void printTable() {
-        System.out.println("Table:");
-        for (int i = 0; i < size; i++) {
-            IntNode node = arr[i];
-            while (node != null) {
-                System.out.println(node.key + " " + node.value);
-                node = node.next;
-            }
-        }
-        System.out.println("Number of collisions: " + this.collisionCnt);
-    }
+	/**
+	 * Returns value if exists
+	 * Return null if not exists
+	 */
+	public Integer get(final int key) {
+		final int pos = hashFunction(key);
+		IntNode node = arr[pos];
+		while(node != null) {
+			if (node.key == key) {
+				return node.value;
+			}
+			node = node.next;
+		}
+		return null;
+	}
 
-    public int getNumCollisions() {
-        return this.collisionCnt;
-    }
+	public void printTable() {
+		// System.out.println("Table:");
+		for (int i = 0; i < size; i++) {
+			IntNode node = arr[i];
+			while (node != null) {
+				// System.out.println(node.key + " " + node.value);
+				node = node.next;
+			}
+		}
+		// System.out.println("Number of collisions: " + this.collisionCnt);
+	}
 
-    private int hashFunction(int key) {
-        return key % size;
-    }
+	public int getNumCollisions() {
+		return collisionCnt;
+	}
 
-    /**
-     * Internal helper class
-     */
-    private class IntNode{
-        public int key, value;
-        public IntNode next;
-        public IntNode(int key, int value) {
-            this.key = key;
-            this.value = value;
-            this.next = null;
-        }
-    }
+	private int hashFunction(final int key) {
+		return key % size;
+	}
+
+	/**
+	 * Internal helper class
+	 */
+	private class IntNode{
+		public int key, value;
+		public IntNode next;
+		public IntNode(final int key, final int value) {
+			this.key = key;
+			this.value = value;
+			next = null;
+		}
+	}
 }
