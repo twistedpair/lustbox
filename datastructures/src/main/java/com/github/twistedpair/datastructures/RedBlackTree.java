@@ -24,16 +24,20 @@ final class RedBlackTree<K extends Comparable<K>, V> implements Iterable<K> {
 
 	private class KeyIterator implements Iterator<K> {
 
-		private Node<K, V> node;
+		// TODO Quite annoying. Usually path back to root encoded in stack frames
+		// How move to position, but keep that path? Additional stack?
+		// Note possible w/o parent ref in Node object, but that's cheating.
+		// Look at JDK TreeSet -> extracts list of keys, returns iterator for that -> what a hack
+		private Node<K, V> root;
 
 		public KeyIterator(final Node<K, V> root) {
 			super();
-			node = root;
+			this.root = root;
 		}
 
 		@Override
 		public boolean hasNext() {
-			if (node != null) {
+			if (root != null) {
 
 			}
 			return false;
@@ -41,18 +45,18 @@ final class RedBlackTree<K extends Comparable<K>, V> implements Iterable<K> {
 
 		@Override
 		public K next() {
-			if (node.left != null) {
-				node = node.left;
-				return node.key;
+			if (root.left != null) {
+				root = root.left;
+				return root.key;
 			}
-			else if (node.right != null) {
-				node = node.right;
-				return node.key;
+			else if (root.right != null) {
+				root = root.right;
+				return root.key;
 			}
 			else {
 				// go up - but we'd need a parent ref in every node
 			}
-			return node.key;
+			return root.key;
 		}
 
 		@Override
@@ -82,58 +86,68 @@ final class RedBlackTree<K extends Comparable<K>, V> implements Iterable<K> {
 	}
 
 	public void remove(final K key) {
-		remove(key, null, root);
+		root = remove(key, root);
 	}
 
-	private void remove(final K key, final Node<K,V> prevLoc, final Node<K,V> loc) {
+	private Node<K, V> remove(final K key, Node<K, V> loc) {
+
+		if(loc==null )  {
+			return null; // EOB
+		}
 
 		final int cmp = key.compareTo(loc.key);
 		if (cmp < 0) {
-			remove(key, loc, loc.left);
+			loc.left = remove(key, loc.left);
 		}
 		else if (cmp > 0) {
-			remove(key, loc, loc.right);
+			loc.right = remove(key, loc.right);
 		}
 		else { // found target node!
-			// pull up left/right if present
-			if (loc.left != null || loc.right != null) {
-				final boolean isPrevNodeLeft = prevLoc.left.key.compareTo(key) == 0;
-				if (isPrevNodeLeft) {
-					// was left branch
-					prevLoc.left = loc;
-					// reinsert all values to the right?
-				}
-				else {
-					// was right branch
-					prevLoc.right = loc;
-					// reinsert all values to the left?
-				}
+			size--;
+			// use opposite if one branch null
+			if (loc.left == null) {
+				return loc.right;
+			}
+			else if (loc.right == null) {
+				return loc.left;
+			}
+			// we've got both branches - find right minima
+			else {
+				final Node<K,V> temp = loc;
+				loc = min(loc.right); // replacement node (has no left)
+				loc.right = removeMin(loc.right);// prune min from right (we've moving it)
+				loc.left = temp.left;
 			}
 		}
+		return loc;
 	}
 
-	private void insert(final Node<K, V> node, final Node<K, V> loc) {
+	private Node<K,V> removeMin(final Node<K,V> node) {
+		if(node.left==null) {
+			return node.right;
+		}
+		node.left = removeMin(node.left);
+		return node;
+	}
+
+	private Node<K, V> insert(final Node<K, V> node, final Node<K, V> loc) {
+
+		if (loc == null) {
+			size++;
+			return node;
+		}
 
 		final int cmp = node.key.compareTo(loc.key);
 		if (cmp < 0) {
-			if (loc.left == null) {
-				loc.left = node;
-				size++;
-				return;
-			}
-			insert(node, loc.left);
+			loc.left = insert(node, loc.left);
 		}
 		else if (cmp > 0) {
-			if (loc.right == null) {
-				loc.right = node;
-				size++;
-				return;
-			}
-			insert(node, loc.right);
+			loc.right = insert(node, loc.right);
 		}
 		else {
 			loc.value = node.value; // overwrite!
 		}
+		return loc;
 	}
 
 	private Node<K,V> find(final K key, final Node<K, V> node) {
@@ -166,32 +180,68 @@ final class RedBlackTree<K extends Comparable<K>, V> implements Iterable<K> {
 		return node != null;
 	}
 
-	public K first() {
+	public K min() {
 		if(size==0) {
 			return null;
 		}
-		return first(root);
+		return min(root).key;
 	}
 
-	private K first(final Node<K,V> node) {
-		if(node.left!=null) {
-			return first(node.left);
+	private Node<K,V> min(final Node<K,V> node) {
+		if (node.left == null) {
+			return node;
+		}
+		return min(node.left);
+	}
+
+	/**
+	 * Find entry <= given key
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public K floor(final K key) {
+		if (size == 0) {
+			return null;
+		}
+
+		final Node<K,V> node = floor(key, root);
+		if(node==null) {
+			return null;
 		}
 		return node.key;
 	}
 
-	public K last() {
+	public Node<K,V> floor(final K key, final Node<K,V> node) {
+		if(node==null) {
+			return null;
+		}
+
+		final int cmp = key.compareTo(node.key);
+		if (cmp == 0) {
+			return node;
+		}
+		else if (cmp < 0) {
+			return floor(key, node.left);
+		}
+		else {
+			final Node<K, V> right = floor(key, node.right);
+			return right == null ? node : right;
+		}
+	}
+
+	public K max() {
 		if(size==0) {
 			return null;
 		}
-		return last(root);
+		return max(root).key;
 	}
 
-	private K last(final Node<K,V> node) {
+	private Node<K,V> max(final Node<K,V> node) {
 		if(node.right!=null) {
-			return last(node.right);
+			return max(node.right);
 		}
-		return node.key;
+		return node;
 	}
 
 
@@ -201,6 +251,8 @@ final class RedBlackTree<K extends Comparable<K>, V> implements Iterable<K> {
 			lastBalance++;
 			return;
 		}
+
+		// TODO implement
 
 		// balance
 		lastBalance = 0;

@@ -28,8 +28,8 @@ public final class RedBlackTreeTest {
 
 		// test
 		assertEquals("Tree missing items", uniqueEntries, tree.size());
-		assertEquals("Wrong first", first, tree.first());
-		assertEquals("Wrong last", last, tree.last());
+		assertEquals("Wrong first", first, tree.min());
+		assertEquals("Wrong last", last, tree.max());
 
 		// fetch all keys, should have correct values - reverse order
 		for (int n = testArr.length - 1; n >= 0; n--) {
@@ -44,7 +44,7 @@ public final class RedBlackTreeTest {
 		assertFalse("Wrong contains", tree.contains(Integer.MIN_VALUE));
 		assertFalse("Wrong contains", tree.contains(4));
 
-		assertEquals("Wrong get", last, tree.last());
+		assertEquals("Wrong get", last, tree.max());
 
 		// test update value
 		final Integer testKey = testArr[3];
@@ -54,8 +54,20 @@ public final class RedBlackTreeTest {
 		assertEquals("Tree not updated correctly items", uniqueEntries,
 				tree.size());
 
-		// iterator && order of contents
-		// test remove
+		// test floor
+		final Integer expected1 = 303;
+		final Integer expected2 = 201;
+		assertEquals("Bad floor", expected1, tree.floor(303));
+		assertEquals("Bad floor", expected2, tree.floor(302));
+		assertEquals("Bad floor", null, tree.floor(-2000));
 
+		// TODO iterator && order of contents
+
+		// test remove
+		final Integer removeMe = 303;
+		tree.remove(removeMe);
+		assertEquals("Wrong update value", uniqueEntries - 1, tree.size());
+		assertFalse("Removed item remains", tree.contains(removeMe));
+		assertEquals("Can't find value", "5004V", tree.get(last));
 	}
 }
