@@ -11,28 +11,6 @@ import org.junit.Test;
  */
 public final class GenericAccessTest {
 
-	private class GenericHolder<T> {
-		private final T value;
-
-		public GenericHolder(final T value) {
-			super();
-			this.value = value;
-		}
-
-		// assumes non-null values
-		public boolean isNumericInstanceOf() {
-			return value instanceof Number;
-		}
-
-		public boolean isNumericIsAssignableFrom() {
-			return Number.class.isAssignableFrom(value.getClass());
-		}
-
-		public boolean isNumericIsInstance() {
-			return Number.class.isInstance(value);
-		}
-	}
-
 	@Test
 	public <T> void isANumberIsAssignable() {
 		final Integer value = 3;

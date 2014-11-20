@@ -16,8 +16,7 @@ final class CyclicLinkedList<E> implements Iterable<E> {
 
 	private int size;
 
-	private final CycleDetectionStrategy<E> cycleDetectionStrategy
-	= new TortoiseHareCycleDetectionStrategy<E>();
+	private final CycleDetectionStrategy<E> cycleDetectionStrategy = new TortoiseHareCycleDetectionStrategy<E>();
 
 	/** Let user tell us how large a cycle to make **/
 
@@ -25,7 +24,8 @@ final class CyclicLinkedList<E> implements Iterable<E> {
 	 * Create nodes with a cycle
 	 * 
 	 * @param listSize
-	 * @param cycleSize set to 0 for no cycle
+	 * @param cycleSize
+	 *            set to 0 for no cycle
 	 */
 	public void addCycle(final int listSize, final int cycleSize) {
 
@@ -83,7 +83,6 @@ final class CyclicLinkedList<E> implements Iterable<E> {
 		size++;
 		return appenedNode;
 	}
-
 
 	public boolean isCyclic() {
 		return cycleDetectionStrategy.isCyclic(this);
