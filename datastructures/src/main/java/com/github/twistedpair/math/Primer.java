@@ -22,6 +22,52 @@ public final class Primer {
 	private static final long FERMAT_ITERATIONS = 100; // 1-1/2^k confidence
 	private static final BigInteger ONE = BigInteger.ONE;
 
+	public double pow(final double base, final double power) {
+		final double fract = power - Math.rint(power);
+		if (fract == 0) {
+
+		}
+		return base;
+	}
+
+	public double pow(final double base, final long power) {
+		if (power == 0) { return 1; }			// identity
+		if (base == 2) { return 1 << power; }	// bit shift
+
+		return powRec(base, power);
+	}
+
+	private double powRec(final double base, final long n) {
+		if (n % 2 == 0) { // even
+			final double v = powRec(base, n / 2);
+			return v * v;
+		}
+		else if (n > 1) { // odd
+			return powRec(base, n - 1) * base;
+		}
+		else {
+			return base;
+		}
+	}
+
+	// TODO newton's method
+	public double sqrt(final long base) {
+		if (base == 0) { return 0; } // div/0
+		if (base == 1) { return 1; } // identity
+
+		// fx = base*base
+		double error = 1;
+		final double precision = 1e-10;
+		double value = 4; // base / 2;
+		while (error > precision) {
+			final double nextValue = value - (value*value - base) / (2 * value);
+			error = Math.abs(nextValue - value);
+			value = nextValue;
+		}
+
+		return value;
+	}
+
 	/**
 	 * Find the primes up to this value
 	 * @param limit

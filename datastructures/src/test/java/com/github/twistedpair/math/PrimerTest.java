@@ -15,6 +15,31 @@ public final class PrimerTest {
 	final Primer primer = new Primer();
 
 	@Test
+	public void testPow() {
+		final double precsision = 1e8;
+		assertEquals(1, primer.pow(2d, 0), precsision);
+		assertEquals(0, primer.pow(0d, 1), precsision);
+		assertEquals(4, primer.pow(2d, 2), precsision);
+		assertEquals(4, primer.pow(2d, 2), precsision);
+		assertEquals(100, primer.pow(10d, 2), precsision);
+		assertEquals(256, primer.pow(2d, 8), precsision);
+		assertEquals(59049, primer.pow(3d, 10), precsision);
+		assertEquals(1 / 8, primer.pow(1 / 2, 3), precsision);
+	}
+
+	@Test
+	public void testSqrt() {
+		final double precsision = 1e8;
+		assertEquals(1.41421356237d, primer.sqrt(2), precsision);
+		assertEquals(1d, primer.sqrt(1), precsision);
+		assertEquals(2d, primer.sqrt(4), precsision);
+		assertEquals(3d, primer.sqrt(9), precsision);
+		assertEquals(0d, primer.sqrt(0), precsision);
+		assertEquals(1d, primer.sqrt(1), precsision);
+		assertEquals(9d, primer.sqrt(81), precsision);
+	}
+
+	@Test
 	public void testPrimerangeTwoOrLess() {
 		assertEquals(0, primer.findPrimes(0).length);
 		assertEquals(0, primer.findPrimes(1).length);
