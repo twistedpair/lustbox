@@ -67,6 +67,24 @@ public final class Primer {
 
 		return value;
 	}
+	
+	public double nrt(final long base, final long root ) {
+		if (root == 0) { return 1; } // identity
+		if (base == 0) { return 0; } // div/0
+		if (base == 1) { return 1; } // identity
+		
+		// fx = base*base
+		double error = 1;
+		final double precision = 1e-10;
+		double value = 4; // base / 2;
+		while (error > precision) {
+			final double nextValue = value - (pow(value,root) - base) / (root * pow(value, root-1));
+			error = Math.abs(nextValue - value);
+			value = nextValue;
+		}
+		
+		return value;
+	}
 
 	/**
 	 * Find the primes up to this value

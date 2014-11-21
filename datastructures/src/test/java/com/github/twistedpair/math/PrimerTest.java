@@ -16,7 +16,7 @@ public final class PrimerTest {
 
 	@Test
 	public void testPow() {
-		final double precsision = 1e8;
+		final double precsision = 1e-8;
 		assertEquals(1, primer.pow(2d, 0), precsision);
 		assertEquals(0, primer.pow(0d, 1), precsision);
 		assertEquals(4, primer.pow(2d, 2), precsision);
@@ -29,7 +29,7 @@ public final class PrimerTest {
 
 	@Test
 	public void testSqrt() {
-		final double precsision = 1e8;
+		final double precsision = 1e-8;
 		assertEquals(1.41421356237d, primer.sqrt(2), precsision);
 		assertEquals(1d, primer.sqrt(1), precsision);
 		assertEquals(2d, primer.sqrt(4), precsision);
@@ -37,6 +37,16 @@ public final class PrimerTest {
 		assertEquals(0d, primer.sqrt(0), precsision);
 		assertEquals(1d, primer.sqrt(1), precsision);
 		assertEquals(9d, primer.sqrt(81), precsision);
+	}
+
+	@Test
+	public void testNRoot() {
+		final double precsision = 1e-8;
+		assertEquals(27, primer.nrt(27, 1), precsision);
+		assertEquals(1, primer.nrt(27, 0), precsision);
+		assertEquals(3, primer.nrt(27, 3), precsision);
+		assertEquals(3.03658897188, primer.nrt(28, 3), precsision);
+		assertEquals(4, primer.nrt(64, 3), precsision);
 	}
 
 	@Test
