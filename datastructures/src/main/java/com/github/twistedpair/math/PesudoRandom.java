@@ -1,4 +1,4 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.math;
 
 import java.util.concurrent.atomic.AtomicLong;
 

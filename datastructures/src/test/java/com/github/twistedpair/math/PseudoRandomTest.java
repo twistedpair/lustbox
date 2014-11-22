@@ -1,4 +1,4 @@
-package com.github.twistedpair.datastructures;
+package com.github.twistedpair.math;
 
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
