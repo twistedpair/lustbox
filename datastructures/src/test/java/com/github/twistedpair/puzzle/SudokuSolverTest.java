@@ -1,4 +1,4 @@
-package com.github.twistedpair.puzzel;
+package com.github.twistedpair.puzzle;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import com.github.twistedpair.puzzle.SudokuSolver;
 
 public class SudokuSolverTest {
 

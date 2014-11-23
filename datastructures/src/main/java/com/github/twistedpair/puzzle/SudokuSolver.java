@@ -1,4 +1,4 @@
-package com.github.twistedpair.puzzel;
+package com.github.twistedpair.puzzle;
 
 import java.util.ArrayList;
 import java.util.Arrays;

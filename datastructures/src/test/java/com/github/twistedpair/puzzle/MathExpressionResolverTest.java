@@ -1,8 +1,11 @@
-package com.github.twistedpair.puzzel;
+package com.github.twistedpair.puzzle;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import com.github.twistedpair.puzzle.ExpressionResolver;
+import com.github.twistedpair.puzzle.MathExpressionResolver;
 
 public final class MathExpressionResolverTest {
 

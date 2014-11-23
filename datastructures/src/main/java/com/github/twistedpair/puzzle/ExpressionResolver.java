@@ -1,4 +1,4 @@
-package com.github.twistedpair.puzzel;
+package com.github.twistedpair.puzzle;
 
 
 public interface ExpressionResolver {

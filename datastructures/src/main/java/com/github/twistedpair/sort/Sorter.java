@@ -1,7 +1,7 @@
 package com.github.twistedpair.sort;
 
 
-public abstract class Sorter<T extends Comparable<T>> {
+public abstract class Sorter<T extends Comparable<? super T>> {
 
 	public abstract void sort(final T[] arr);
 
