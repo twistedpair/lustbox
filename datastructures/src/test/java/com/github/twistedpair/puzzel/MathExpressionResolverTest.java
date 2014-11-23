@@ -13,8 +13,8 @@ public final class MathExpressionResolverTest {
 	@Test
 	public void testOperators() {
 		// setup
-		final String expression = "9+2-(5*4/5)";
-		final double expected = 7d;
+		final String expression = "9+2-(5*4/5)+3";
+		final double expected = 10d;
 		// test
 		final double actual = resolver.resolve(expression);
 		assertEquals("Wrong evaluation", expected, actual, PRECISION);
@@ -23,8 +23,8 @@ public final class MathExpressionResolverTest {
 	@Test
 	public void testOperatorsAndParens() {
 		// setup
-		final String expression = "10+(2-5)*(4/5)";
-		final double expected = 7.6d;
+		final String expression = ".10*((2-5)+(4/5)+(2))";
+		final double expected = -0.02;
 		// test
 		final double actual = resolver.resolve(expression);
 		assertEquals("Wrong evaluation", expected, actual, PRECISION);
