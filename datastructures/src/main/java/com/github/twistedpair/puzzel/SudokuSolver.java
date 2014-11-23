@@ -1,28 +1,41 @@
-package com.github.twistedpair.sort;
+package com.github.twistedpair.puzzel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 
 /**
- * @author a466857
+ * Recursive square/col/row remaining move intersect solver<br>
+ * TODO don't iterate in line scan mode. Pick random set of moves and jump through them
+ * 
+ * @author Joseph Lust
  */
 public class SudokuSolver {
 
+	private int moveCnt = 0;
 	private static final int N = 9;
 	private static int S = N / 3;
 
-	public int[][] solve(final int[][] puzzel) {
+	private int[][] jump;
+
+	public int[][] solve(final int[][] puzzle) {
 
 		final Stack<Integer>[] rows = new Stack[N]; // generics and arrays can't be friends
 		final Stack<Integer>[] cols = new Stack[N];
 		final Stack<Integer>[] sqrs = new Stack[N];
-		fillStacks(puzzel, rows, cols, sqrs);
+		fillStacks(puzzle, rows, cols, sqrs);
+
+		jump = createJumpTable(puzzle);
 
 		// TODO, start at most defined row
 		// TODO make preset random jump table, reset table/change start row after threshold moves
-		return solve(puzzel, 0, 0, rows, cols, sqrs);
+		moveCnt = 0;
+
+		final int mIdx = 0; // count down
+		final int[] move = jump[mIdx];
+		return solve(puzzle, move[0], move[1], rows, cols, sqrs, mIdx + 1);
 	}
 
 	private void fillStacks(final int[][] puzzel, final Stack<Integer>[] rows,
@@ -83,31 +96,94 @@ public class SudokuSolver {
 		}
 	}
 
+	/**
+	 * Tried using this to make different iterating patterns<br>
+	 * Also reduces time spent computing next move by making a lookup
+	 * 
+	 * @param puzzle
+	 * @return
+	 */
+	private int[][] createJumpTable(final int[][] puzzle) {
+		// would prefer arrays, but only one instance, so no need for verbosity
+		final List<List<Integer>> jumps = new ArrayList<>(N * N);
+
+		/*
+		// iterate by columns
+		for(int c=0; c<N; c++) {
+			for (int r = 0; r < N; r++) {
+				if (puzzle[r][c] == 0) {
+					final List<Integer> jump = new ArrayList<>(2);
+					jump.add(r);
+					jump.add(c);
+					jumps.add(jump);
+				}
+			}
+		}
+		// iterate by rows
+		for (int r = 0; r < N; r++) {
+			for(int c=0; c<N; c++) {
+				if (puzzle[r][c] == 0) {
+					final List<Integer> jump = new ArrayList<>(2);
+					jump.add(r);
+					jump.add(c);
+					jumps.add(jump);
+				}
+			}
+		}
+		 */
+
+		// iterate by squares
+		for (int sr = 0; sr < S; sr++) {
+			for (int sc = 0; sc < S; sc++) {
+				// SxS kernel
+				for (int r = S * sr; r < S * (sr + 1); r++) {
+					for (int c = S * sc; c < S * (sc + 1); c++) {
+						if (puzzle[r][c] == 0) {
+							final List<Integer> jump = new ArrayList<>(2);
+							jump.add(r);
+							jump.add(c);
+							jumps.add(jump);
+						}
+					}
+				}
+			}
+		}
+
+		// Collections.shuffle(jumps); // nope
+		// Collections.reverse(jumps); // works - perhaps within rows?
+
+		int i = 0;
+		final int[][] result = new int[jumps.size() + 1][2]; // pad 1 empty at end
+		for(final List<Integer> jump : jumps) {
+			result[i++] = new int[] { jump.get(0), jump.get(1) };
+		}
+
+		return result;
+	}
+
 	private int[][] solve(final int[][] puzzel, final int r, final int c,
 			final Stack<Integer>[] rows, final Stack<Integer>[] cols,
-			final Stack<Integer>[] sqrs) {
+			final Stack<Integer>[] sqrs, final int mIdx) {
+		moveCnt++;
 
 		// continue?
-		if (r < N) {
 
-			final int nc = c < N - 1 ? c + 1 : 0; // [0,8]
-			final int nr = nc == 0 ? r + 1 : r; // reset w/ c, no check above, breach indicates
+		//if (r < N) {
+		if (mIdx < jump.length) {
 
-			if (puzzel[r][c] > 0) { // skip prefilled
-				return solve(puzzel, nr, nc, rows, cols, sqrs);
-			}
-
+			final int nr = jump[mIdx][0];
+			final int nc = jump[mIdx][1];
 			final int s = S * (r / S) + c / S;
 
 			final Collection<Integer> opts = intersect(intersect(rows[r], cols[c]), sqrs[s]);
 			for (final int opt : opts) {
 
-				rows[r].removeElement(opt); // save
+				rows[r].removeElement(opt); // save - need a better data structure, is bulk of time
 				cols[c].removeElement(opt);
 				sqrs[s].removeElement(opt);
 				puzzel[r][c] = opt;
 
-				final int[][] solution = solve(puzzel, nr, nc, rows, cols, sqrs);
+				final int[][] solution = solve(puzzel, nr, nc, rows, cols, sqrs, mIdx + 1);
 
 				if (solution == null) { // bad branch, rollback
 					rows[r].push(opt);
@@ -134,6 +210,10 @@ public class SudokuSolver {
 			}
 		}
 		return result;
+	}
+
+	public int getMoveCnt() {
+		return moveCnt;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.github.twistedpair.sort;
+package com.github.twistedpair.puzzel;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -7,9 +7,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-/**
- * @author a466857
- */
 public class SudokuSolverTest {
 
 	private static final int N = 9;
@@ -22,11 +19,11 @@ public class SudokuSolverTest {
 		final int[][] testPuzzel = getPuzzel();
 		final int[][] actual = sudoku.solve(testPuzzel);
 
+		// pretty print
+		printMatrix(actual, sudoku.getMoveCnt());
+
 		assertNotNull("No solution found!", actual);
 		assertTrue("Bad solution found!", isValid(actual));
-
-		// pretty print
-		printMatrix(actual);
 	}
 
 	private boolean isValid(final int[][] field) {
@@ -81,17 +78,23 @@ public class SudokuSolverTest {
 	private int[][] getPuzzel() {
 		final int[][] field = new int[N][N];
 
-		field[0] = new int[] { 0, 0, 0, 0, 1, 0, 0, 2, 6 };
-		field[1] = new int[] { 0, 0, 6, 0, 0, 4, 0, 0, 0 };
-		field[2] = new int[] { 0, 8, 0, 7, 0, 0, 5, 0, 0 };
+		final int[] raw = new int[] {
+				0, 0, 0,  0, 1, 0,  0, 2, 6,
+				0, 0, 6,  0, 0, 4,  0, 0, 0,
+				0, 8, 0,  7, 0, 0,  5, 0, 0,
 
-		field[3] = new int[] { 0, 0, 4, 0, 0, 3, 0, 9, 0 };
-		field[4] = new int[] { 9, 0, 0, 0, 0, 0, 0, 0, 8 };
-		field[5] = new int[] { 0, 1, 0, 5, 0, 0, 3, 0, 0 };
+				0, 0, 4,  0, 0, 3,  0, 9, 0,
+				9, 0, 0,  0, 0, 0,  0, 0, 8,
+				0, 1, 0,  5, 0, 0,  3, 0, 0,
 
-		field[6] = new int[] { 0, 0, 5, 0, 0, 2, 0, 7, 0 };
-		field[7] = new int[] { 0, 0, 0, 3, 0, 0, 4, 0, 0 };
-		field[8] = new int[] { 6, 4, 0, 0, 8, 0, 0, 0, 0 };
+				0, 0, 5,  0, 0, 2,  0, 7, 0,
+				0, 0, 0,  3, 0, 0,  4, 0, 0,
+				6, 4, 0,  0, 8, 0,  0, 0, 0
+		};
+
+		for(int r=0; r<N; r++) {
+			System.arraycopy(raw,r*N,field[r],0,N);
+		}
 		/*
 		field[0] = new int[] { 0, 0, 0, 0, 0, 0, 0, 5, 0 };
 		field[1] = new int[] { 0, 0, 0, 7, 0, 0, 8, 0, 0 };
@@ -108,11 +111,11 @@ public class SudokuSolverTest {
 		return field;
 	}
 
-	private void printMatrix(final int[][] mat) {
+	private void printMatrix(final int[][] mat, final int moveCnt) {
 		for (final int[] row : mat) {
 			System.out.println(Arrays.toString(row));
 		}
-		// System.out.println(String.format("Attempted %s iterations"));
+		System.out.println(String.format("Attempted %s iterations", moveCnt));
 	}
 
 }
