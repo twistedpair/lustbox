@@ -12,7 +12,7 @@ import java.util.Stack;
  * 
  * @author Joseph Lust
  */
-public class SudokuSolver {
+public class BinarySudokuSolver {
 
 	private int moveCnt = 0;
 	private static final int N = 9;
@@ -22,9 +22,9 @@ public class SudokuSolver {
 
 	public int[][] solve(final int[][] puzzle) {
 
-		final Stack<Integer>[] rows = new Stack[N]; // generics and arrays can't be friends
-		final Stack<Integer>[] cols = new Stack[N];
-		final Stack<Integer>[] sqrs = new Stack[N];
+		final int[] rows = new int[N]; // generics and arrays can't be friends
+		final int[] cols = new int[N];
+		final int[] sqrs = new int[N];
 		fillStacks(puzzle, rows, cols, sqrs);
 
 		jump = createJumpTable(puzzle);
@@ -38,8 +38,8 @@ public class SudokuSolver {
 		return solve(puzzle, move[0], move[1], rows, cols, sqrs, mIdx + 1);
 	}
 
-	private void fillStacks(final int[][] puzzel, final Stack<Integer>[] rows,
-			final Stack<Integer>[] cols, final Stack<Integer>[] sqrs) {
+	private void fillStacks(final int[][] puzzel, final int[] rows,
+			final int[] cols, final int[] sqrs) {
 
 		final Stack<Integer> opts = new Stack<>();
 		opts.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -57,7 +57,7 @@ public class SudokuSolver {
 				}
 			}
 
-			rows[r] = available;
+			rows[r] = arrayToBits(available);
 			r++;
 		}
 		// cols
@@ -71,7 +71,7 @@ public class SudokuSolver {
 				}
 			}
 
-			cols[c] = available;
+			cols[c] = arrayToBits(available);
 		}
 		// squares
 		int s = 0;
@@ -90,10 +90,26 @@ public class SudokuSolver {
 					}
 				}
 
-				sqrs[s] = available;
+				sqrs[s] = arrayToBits(available);
 				s++;
 			}
 		}
+	}
+
+	/**
+	 * Convert 1 indexed moves into 0 indexed bit field
+	 * 
+	 * @param moves
+	 * @return
+	 */
+	private int arrayToBits(final Collection<Integer> moves) {
+		int bitMoves = 0;
+
+		for (final int move : moves) {
+			bitMoves |= 1 << move - 1; // 1->0, 9->8
+		}
+
+		return bitMoves;
 	}
 
 	/**
@@ -162,39 +178,38 @@ public class SudokuSolver {
 	}
 
 	private int[][] solve(final int[][] puzzle, final int r, final int c,
-			final Stack<Integer>[] rows, final Stack<Integer>[] cols,
-			final Stack<Integer>[] sqrs, final int mIdx) {
+			final int[] rows, final int[] cols, final int[] sqrs,
+			final int mIdx) {
 		moveCnt++;
 
 		// continue?
-
-		//if (r < N) {
 		if (mIdx < jump.length) {
 
 			final int nr = jump[mIdx][0];
 			final int nc = jump[mIdx][1];
 			final int s = S * (r / S) + c / S;
 
-			// TODO move these to bit fields for speed! short's will do
-			final Collection<Integer> opts = intersect(intersect(rows[r], cols[c]), sqrs[s]);
-			// intersect becomes just A && B && C
-			for (final int opt : opts) {
+			final int moves = rows[r] & cols[c] & sqrs[s]; // intersect
+			for (int b=0; b<N; b++) {
+				final int mask = 1 << b; // 0 indexed
+				if ((moves & mask) > 0) {
 
-				rows[r].removeElement(opt); // save - need a better data structure, is bulk of time
-				cols[c].removeElement(opt);
-				sqrs[s].removeElement(opt);
-				puzzle[r][c] = opt;
+					rows[r] ^= mask;
+					cols[c] ^= mask;
+					sqrs[s] ^= mask;
+					puzzle[r][c] = b + 1; // 0->1, 1->2 ...
 
-				final int[][] solution = solve(puzzle, nr, nc, rows, cols, sqrs, mIdx + 1);
+					final int[][] solution = solve(puzzle, nr, nc, rows, cols, sqrs, mIdx + 1);
 
-				if (solution == null) { // bad branch, rollback
-					rows[r].push(opt);
-					cols[c].push(opt);
-					sqrs[s].push(opt);
-					puzzle[r][c] = 0;
-				}
-				else {
-					return solution; // solution branch
+					if (solution == null) { // bad branch, rollback
+						rows[r] |= mask;
+						cols[c] |= mask;
+						sqrs[s] |= mask;
+						puzzle[r][c] = 0;
+					}
+					else {
+						return solution; // solution branch
+					}
 				}
 			}
 
@@ -202,16 +217,6 @@ public class SudokuSolver {
 		}
 
 		return puzzle; // solution found
-	}
-
-	private <T> Collection<T> intersect(final Collection<T> c1, final Collection<T> c2) {
-		final Collection<T> result = new ArrayList<>(N);
-		for(final T item : c1) {
-			if(c2.contains(item)) {
-				result.add(item);
-			}
-		}
-		return result;
 	}
 
 	public int getMoveCnt() {
