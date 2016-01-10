@@ -10,26 +10,29 @@ final object SudokuSolver {
   // S3 based anagram solver
 
   type M = Array[Array[Int]]
-  val SudokuRange = 0 until 9
 
+  val SudokuSize = 9
+  val SudokuRange = 0 until SudokuSize
+  val AllBitsSet = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256
+
+  // More efficient to use mutable arrays than sequences given direct access need
   case class Board(cols: Array[Int], rows: Array[Int], sqrs: Array[Int]) {
     /** Mark the empty position as taken **/
-    def apply(move: (Int, Int), v: Int): Board = {
-
-      val cols2 = Array.fill(9)(0)
-      Array.copy(cols, 0, cols2, 0, 9)
-      val rows2 = Array.fill(9)(0)
-      Array.copy(rows, 0, rows2, 0, 9)
-      val sqrs2 = Array.fill(9)(0)
-      Array.copy(sqrs, 0, sqrs2, 0, 9)
-
-      val b = Board(cols2, rows2, sqrs2)
-
+    def rm(move: (Int, Int), v: Int): Board = {
       val mask = 1 << v - 1
-      b.rows(move._1) ^= mask
-      b.cols(move._2) ^= mask
-      b.sqrs(rcToSqr(move)) ^= mask
-      b
+      rows(move._1) ^= mask
+      cols(move._2) ^= mask
+      sqrs(rcToSqr(move)) ^= mask
+      this
+    }
+
+    /** Add back a position on guess fail **/
+    def add(move: (Int, Int), v: Int): Board = {
+      val mask = 1 << v - 1
+      rows(move._1) |= mask
+      cols(move._2) |= mask
+      sqrs(rcToSqr(move)) |= mask
+      this
     }
 
     def isValid(): Boolean = Board.isValid(this)
@@ -46,46 +49,35 @@ final object SudokuSolver {
   /** 0 Value indicates unset square **/
   def solveSudoku(b: M): Option[Board] = {
 
-    val moves = boardToMoves(b)
-    val board = boardToBinary(b)
+    def optimizeMoves(b: Board, moves: List[(Int, Int)]) = moves.sortBy(guesses(b, _).size)
+    def guesses(b: Board, m: (Int, Int)) = binToMoves(b.rows(m._1) & b.cols(m._2) & b.sqrs(rcToSqr(m)))
 
-    var n = 0
+    val board = boardToBinary(b)
+    val betterMoves = optimizeMoves(board, boardToMoves(b))
 
     def solve(b: Board, moves: List[(Int, Int)]): Option[Board] = {
-      //def solve(b: Board, moves: List[(Int, Int)], taken: List[(Int, Int, Int)]): Option[Board] = {
-
-      //println(taken.reverse)
-      n += 1
-
       moves match {
-        case Nil if b.isValid ⇒ Some(b)
+        case Nil if b.isValid ⇒ Some(b) // solved!
         case m :: xs ⇒ { // next move
-
-          val guesses = b.rows(m._1) & b.cols(m._2) & b.sqrs(rcToSqr(m))
-          if (guesses > 0) {
-            for (guess ← binToMoves(guesses)) {
-              //solve(b(m, guess), xs, (m._1, m._2, guess) +: taken) match {
-              solve(b(m, guess), xs) match {
-                case x @ Some(_) ⇒ return x
-                case _ ⇒ None // continue
-              }
+          for (guess ← guesses(b, m)) {
+            solve(b.rm(m, guess), xs) match {
+              case x @ Some(_) ⇒ return x
+              case _ ⇒ b.add(m, guess); None // undo, continue
             }
           }
-          None
+          None // all guesses fail, backtrack
         }
       }
     }
 
-    val start = System.nanoTime()
-    val r = solve(board, moves)
-    val ts = System.nanoTime() - start
-    println(s"moves: $n ms: ${ts / 1000000}")
-    r
+    solve(board, betterMoves)
   }
+
+  /** Sudoku Utils **/
 
   /** Convert to binary representation of remaining empty entries **/
   def boardToBinary(b: M): Board = {
-    val empty = Array.fill[Int](9)(511) // all set
+    val empty = Array.fill[Int](SudokuSize)(AllBitsSet)
     val cols = empty.toBuffer
     val rows = empty.toBuffer
     val sqrs = empty.toBuffer
@@ -104,7 +96,6 @@ final object SudokuSolver {
     Board(cols.toArray, rows.toArray, sqrs.toArray)
   }
 
-  /** Sudoku Utils **/
   def boardToMoves(b: M): List[(Int, Int)] = {
     (for (
       r ← SudokuRange;
@@ -115,10 +106,12 @@ final object SudokuSolver {
   def rcToSqr(move: (Int, Int)): Int = (move._1 / 3.0).toInt * 3 + (move._2 / 3.0).toInt
 
   /** Binary to numerical value of bitfield for set bits **/
-  def binToMoves(bin: Int): List[Int] =
-    SudokuRange
+  def binToMoves(bin: Int): List[Int] = bin match {
+    case 0 ⇒ Nil
+    case _ ⇒ SudokuRange
       .map(n ⇒ (n + 1, 1 << n))
       .flatMap { nm ⇒ if ((bin & nm._2) > 0) Some(nm._1) else None }
       .toList
+  }
 
 }
