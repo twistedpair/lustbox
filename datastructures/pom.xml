@@ -42,6 +42,16 @@
 
 	<!-- External project dependencies -->
 	<dependencies>
+		<dependency>
+		    <groupId>joda-time</groupId>
+		    <artifactId>joda-time</artifactId>
+		    <version>1.6.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.psjava</groupId>
+		    <artifactId>psjava</artifactId>
+		    <version>0.1.17</version>
+		</dependency>
 		<!-- Testing -->
 		<dependency>
 			<groupId>junit</groupId>
