@@ -14,6 +14,7 @@ final object SudokuSolver {
   val SudokuSize = 9
   val SudokuRange = 0 until SudokuSize
   val AllBitsSet = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256
+  val Masks = SudokuRange.map(n ⇒ (n + 1, 1 << n))
 
   // More efficient to use mutable arrays than sequences given direct access need
   case class Board(cols: Array[Int], rows: Array[Int], sqrs: Array[Int]) {
@@ -55,18 +56,17 @@ final object SudokuSolver {
     val board = boardToBinary(b)
     val betterMoves = optimizeMoves(board, boardToMoves(b))
 
-    def solve(b: Board, moves: List[(Int, Int)]): Option[Board] = {
-      moves match {
-        case Nil if b.isValid ⇒ Some(b) // solved!
-        case m :: xs ⇒ { // next move
-          for (guess ← guesses(b, m)) {
-            solve(b.rm(m, guess), xs) match {
-              case x @ Some(_) ⇒ return x
-              case _ ⇒ b.add(m, guess); None // undo, continue
-            }
+    def solve(b: Board, moves: List[(Int, Int)]): Option[Board] = moves match {
+      //optimizeMoves(b, moves) match { // fewest moves, but 1x slower
+      case Nil if b.isValid ⇒ Some(b) // solved!
+      case m :: xs ⇒ { // next move
+        for (guess ← guesses(b, m)) {
+          solve(b.rm(m, guess), xs) match {
+            case x @ Some(_) ⇒ return x
+            case _ ⇒ b.add(m, guess); None // undo, continue
           }
-          None // all guesses fail, backtrack
         }
+        None // all guesses fail, backtrack
       }
     }
 
@@ -106,12 +106,9 @@ final object SudokuSolver {
   def rcToSqr(move: (Int, Int)): Int = (move._1 / 3.0).toInt * 3 + (move._2 / 3.0).toInt
 
   /** Binary to numerical value of bitfield for set bits **/
-  def binToMoves(bin: Int): List[Int] = bin match {
+  def binToMoves(bin: Int) = bin match {
     case 0 ⇒ Nil
-    case _ ⇒ SudokuRange
-      .map(n ⇒ (n + 1, 1 << n))
-      .flatMap { nm ⇒ if ((bin & nm._2) > 0) Some(nm._1) else None }
-      .toList
+    case _ ⇒ for ((n, mask) ← Masks if (bin & mask) > 0) yield { n }
   }
 
 }
