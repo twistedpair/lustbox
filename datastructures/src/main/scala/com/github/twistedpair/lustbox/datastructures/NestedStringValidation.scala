@@ -3,7 +3,7 @@ package com.github.twistedpair.lustbox.datastructures
 /**
  * Recursive string testing
  */
-final object NestedStringValidation {
+object NestedStringValidation {
 
   def isValid(s: String): Boolean = {
     val chars = s.toList

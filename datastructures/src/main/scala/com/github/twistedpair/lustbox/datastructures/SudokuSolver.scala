@@ -1,11 +1,9 @@
 package com.github.twistedpair.lustbox.datastructures
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
- * Recursive string testing
- */
-final object SudokuSolver {
+  * Recursive string testing
+  */
+object SudokuSolver {
 
   // S3 based anagram solver
 
@@ -51,6 +49,7 @@ final object SudokuSolver {
   def solveSudoku(b: M): Option[Board] = {
 
     def optimizeMoves(b: Board, moves: List[(Int, Int)]) = moves.sortBy(guesses(b, _).size)
+
     def guesses(b: Board, m: (Int, Int)) = binToMoves(b.rows(m._1) & b.cols(m._2) & b.sqrs(rcToSqr(m)))
 
     val board = boardToBinary(b)
@@ -62,7 +61,7 @@ final object SudokuSolver {
       case m :: xs ⇒ { // next move
         for (guess ← guesses(b, m)) {
           solve(b.rm(m, guess), xs) match {
-            case x @ Some(_) ⇒ return x
+            case x@Some(_) ⇒ return x
             case _ ⇒ b.add(m, guess); None // undo, continue
           }
         }
@@ -100,7 +99,9 @@ final object SudokuSolver {
     (for (
       r ← SudokuRange;
       c ← SudokuRange if b(r)(c) == 0
-    ) yield { (r, c) }).toList
+    ) yield {
+      (r, c)
+    }).toList
   }
 
   def rcToSqr(move: (Int, Int)): Int = (move._1 / 3.0).toInt * 3 + (move._2 / 3.0).toInt
@@ -108,7 +109,9 @@ final object SudokuSolver {
   /** Binary to numerical value of bitfield for set bits **/
   def binToMoves(bin: Int) = bin match {
     case 0 ⇒ Nil
-    case _ ⇒ for ((n, mask) ← Masks if (bin & mask) > 0) yield { n }
+    case _ ⇒ for ((n, mask) ← Masks if (bin & mask) > 0) yield {
+      n
+    }
   }
 
 }

@@ -1,7 +1,7 @@
 package com.github.twistedpair.lustbox.datastructures
 
-import org.scalatest.{ FlatSpec, Matchers }
 import com.github.twistedpair.lustbox.datastructures.SudokuSolver._
+import org.scalatest.{FlatSpec, Matchers}
 
 /**
  * Ensure crucial aspects of constraints work
