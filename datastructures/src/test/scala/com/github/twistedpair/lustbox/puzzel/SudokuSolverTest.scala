@@ -1,6 +1,6 @@
-package com.github.twistedpair.lustbox.datastructures
+package com.github.twistedpair.lustbox.puzzel
 
-import com.github.twistedpair.lustbox.datastructures.SudokuSolver._
+import com.github.twistedpair.lustbox.puzzel.SudokuSolver._
 import org.scalatest.{FlatSpec, Matchers}
 
 /**

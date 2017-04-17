@@ -1,4 +1,4 @@
-package com.github.twistedpair.lustbox.datastructures
+package com.github.twistedpair.lustbox.puzzel
 
 /**
   * Recursive string testing
