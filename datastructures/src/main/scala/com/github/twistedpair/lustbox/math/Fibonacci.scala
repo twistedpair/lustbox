@@ -1,38 +1,50 @@
 package com.github.twistedpair.lustbox.math
 
+import scala.annotation.tailrec
+
 /**
- * Recursive string testing
- */
+  * Fibonacci series examples
+  * 0, 1, 1, 2, 3, 5, 8, 13, 21...
+  * Note: 0th term is 0
+  */
 object Fibonacci {
 
-  def isValid(s: String): Boolean = {
-    val chars = s.toList
-    validate(chars.take(1), chars.tail)
+  // TODO add me
+  //def constant(n: Int): BigInt = ???
+
+  def iterative(limit: Int): BigInt = {
+    var f1:BigInt = 0
+    var f2:BigInt = 1
+    var f3:BigInt = 1
+
+    for { _ ← 0 until limit } {
+      f1 = f2 //1
+      f2 = f3
+      f3 = f1 + f2
+    }
+    f1
   }
 
-  @annotation.tailrec
-  def validate(headStack: List[Char], chars: List[Char]): Boolean = {
 
-    if (chars.isEmpty) {
-      return headStack.isEmpty // must have been balanced
-    }
+  def recursive(limit: Int): BigInt = {
 
-    val next = (headStack.headOption, chars.head) match {
-      case (Some('['), c) ⇒ c match {
-        case ']' ⇒ (headStack.tail, chars.tail) // close out
-        case '(' ⇒ (c +: headStack, chars.tail) // go deeper
-        case _ ⇒ return false
+    @tailrec
+    def fib(n: Int, prev: BigInt = 0, acc: BigInt = 1): BigInt =
+      n match {
+        case 0 ⇒ 0
+        case 1 ⇒ acc
+        case _ ⇒ fib(n - 1, acc, acc + prev)
       }
-      case (Some('('), c) ⇒ c match {
-        case '(' ⇒ (c +: headStack, chars.tail) // go deeper
-        case ')' ⇒ (headStack.tail, chars.tail) // close out
-        case _ ⇒ return false
-      }
-      case (None, c) ⇒ (c +: headStack, chars.tail) // top level, go deeper
-      case _ ⇒ return false
-    }
 
-    validate(next._1, next._2)
+    fib(limit)
   }
+
+  private val BigZero:BigInt = 0:BigInt
+  private val BigOne:BigInt = 1
+
+  // Credit: http://www.luigip.com/?p=200
+  private val fibs:Stream[BigInt] = BigZero #:: fibs.scanLeft(BigOne)(_ + _)
+
+  def stream(limit: Int): BigInt = fibs(limit)
 
 }

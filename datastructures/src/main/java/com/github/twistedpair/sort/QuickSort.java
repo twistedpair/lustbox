@@ -31,20 +31,19 @@ public final class QuickSort<T extends Comparable<T>> extends Sorter<T> {
 			return lo;
 		}
 
-		int i = lo, j = hi + 1;
+		int i = lo, j = hi+1;
 		final int p = lo;
-		final T pVal = arr[p];
 
 		while (true) {
-			while (less(arr[++i], pVal) && i < hi) {} // scan LTR, up to hi
-			while (less(pVal, arr[--j]) && j > lo) {} // scan RTL, down to pivot
+			while (less(arr, ++i, p) && i < hi); // scan LTR, up to hi
+			while (less(arr, p, --j) && j > lo) {} // scan RTL, down to pivot
 			if (i >= j) { // crossed, we're finished
 				break;
 			}
 			exch(arr, i, j); // out of place, swap
 
 		}
-		exch(arr, lo, j); // place pivot in middle
+		exch(arr, p, j); // place pivot in middle
 		return j; // new partition @ pivot location
 	}
 }

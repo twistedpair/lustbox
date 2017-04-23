@@ -6,7 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 /**
  * Ensure crucial aspects of constraints work
  */
-final class InterviewQuestionTest extends FlatSpec with Matchers {
+final class NestedStringValidationTest extends FlatSpec with Matchers {
 
   behavior of "A InterviewQuestionTest"
 

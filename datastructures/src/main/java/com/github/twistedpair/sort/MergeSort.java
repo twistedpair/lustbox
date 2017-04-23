@@ -24,13 +24,12 @@ public final class MergeSort<T extends Comparable<T>> extends Sorter<T> {
 			if (i > mid) {
 				arr[k] = (T) aux[j++];			// w/in left bounds
 			}
-			else if (j > hi 					// w/in right bounds
-					|| less((T[]) aux, i, j) ) {// w/in both bounds, compare
+			else if (j > hi) { 					// w/in right bounds
 				arr[k] = (T) aux[i++];			// i < j
 			}
-			else {
-				arr[k] = (T) aux[j++];			// j <= i
-			}
+			else { // within bounds, compare
+                arr[k] = (T) ((less((T[]) aux, i, j)) ? aux[i++] : aux[j++]); // take the lower
+            }
 		}
 	}
 
