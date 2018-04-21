@@ -2,7 +2,7 @@ organization := "com.github.twistedpair.lustbox.datastructures"
 
 name := "data-structures"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.5"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   "org.psjava" % "psjava" % "0.1.19",
 
   // Test
-  "org.scalatest" %% "scalatest" % "2.2.5" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "junit" % "junit" % "4.12" % "test"
 
 )
@@ -28,6 +28,3 @@ sources in doc in Compile := List()
 
 initialCommands in console := "import com.github.twistedpair.lustbox.datastructures._"
 
-// Eclipse plugin config
-// always download and attach sources
-EclipseKeys.withSource := true
