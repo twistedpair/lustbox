@@ -1,7 +1,7 @@
-package com.github.twistedpair.lustbox.puzzel
+package com.github.twistedpair.lustbox.puzzle
 
 /**
-  * For string S, find all substrings of length k with exactly one duplicate character
+  * For string s, find all substrings of length k with exactly one duplicate character
   */
 object SingleDuplicateSubstrings {
 

@@ -1,6 +1,6 @@
-package com.github.twistedpair.lustbox.puzzel
+package com.github.twistedpair.lustbox.puzzle
 
-import com.github.twistedpair.lustbox.puzzel.SudokuSolver._
+import com.github.twistedpair.lustbox.puzzle.SudokuSolver._
 import org.scalatest.{FlatSpec, Matchers}
 
 final class TwiddleTest extends FlatSpec with Matchers {

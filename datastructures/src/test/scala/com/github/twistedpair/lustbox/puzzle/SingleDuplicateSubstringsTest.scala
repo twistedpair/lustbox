@@ -1,6 +1,6 @@
-package com.github.twistedpair.lustbox.puzzel
+package com.github.twistedpair.lustbox.puzzle
 
-import com.github.twistedpair.lustbox.puzzel.SingleDuplicateSubstrings._
+import com.github.twistedpair.lustbox.puzzle.SingleDuplicateSubstrings._
 import org.scalatest.{FlatSpec, Matchers}
 
 final class SingleDuplicateSubstringsTest extends FlatSpec with Matchers {
